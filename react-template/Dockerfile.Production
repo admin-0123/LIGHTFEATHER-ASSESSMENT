@@ -1,0 +1,21 @@
+ARG NODE_VERSION=18.18.0
+
+FROM node:${NODE_VERSION}-slim as base
+
+ENV NODE_ENV=development
+
+RUN if [! -d /usr/src/front-end ]; then mkdir -p /usr/src/front-end; fi
+WORKDIR /usr/src/front-end
+
+#Build
+COPY package.json .
+RUN npm install
+
+COPY . .
+
+EXPOSE 3000
+
+ENV HOST=0.0.0.0
+
+RUN npm run build
+RUN npm prune

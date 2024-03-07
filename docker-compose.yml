@@ -1,0 +1,56 @@
+version: "3.8"
+
+services:
+  lightfeather-backend:
+    container_name: lightfeather-backend
+    build: 
+      context: ./backend
+      dockerfile: Dockerfile.Development
+    restart: unless-stopped
+    # env_file:
+    #   - .env
+    environment:
+      - DATABASE_CLIENT=${DATABASE_CLIENT}
+      - DATABASE_HOST=${DATABASE_HOST}
+      - DATABASE_NAME=${DATABASE_NAME}
+      - DATABASE_USERNAME=${DATABASE_USERNAME}
+      - DATABASE_PORT=${DATABASE_PORT}
+      - ADMIN_JWT_SECRET=${ADMIN_JWT_SECRET}
+      - DATABASE_PASSWORD=${DATABASE_PASSWORD}
+      - NODE_ENV=${NODE_ENV}
+      - APP_KEYS=${APP_KEYS}
+      - API_TOKEN_SALT=${API_TOKEN_SALT}
+    volumes:
+      - ./backend/:/opt/app/
+      - ./public:/opt/app/public/uploads
+    ports:
+      - 8080:8080
+    networks:
+      - web
+      - intern
+  
+  lightfeather-frontend:
+    container_name: lightfeather-frontend
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.Development
+    restart: always
+    environment:
+      - API_BASE_URL_WEB=${API_BASE_URL_WEB}
+      - BROWSER_BASE_URL=${BROWSER_BASE_URL}
+      - CHOKIDAR_USEPOLLING=true
+    ports:
+      - 3000:3000
+    volumes:
+      - ./frontend:/usr/src/nuxt-app
+      - 'frontend_node_modules:/usr/src/nuxt-app/node_modules'
+    depends_on:
+      - lightfeather-backend
+
+networks:
+  intern:
+  web:
+    external: true
+
+volumes:
+  frontend_node_modules:

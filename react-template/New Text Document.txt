@@ -1,0 +1,12 @@
+{
+	"success": true,
+	"data": [
+		"u - Karson Json",
+		"a - dklfjslk
+	]
+}
+
+{
+	"success"" false,
+	"messag" "sd
+}
